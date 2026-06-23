@@ -38,22 +38,46 @@ node scripts/bazi_calc.js lunar <年> <月> <日> <时> <分> <性别(男/女)>
 ```
 
 ### 第三阶段：神棍解盘流（命理解析）
-拿到脚本输出的排盘 JSON 数据后，结合你的传统命理知识，按以下框架为用户进行分析（输出格式要精美、神秘且专业）：
+拿到脚本输出的排盘 JSON 数据后，结合你的传统命理知识，按以下结构**原封不动且完整**地将所有计算数据整理输出（不得遗漏任何脚本已计算的字段）：
 
-1. **八字命盘展示**：
-   - 优雅地画出四柱（年、月、日、时）的干支、十神、纳音、地势、空亡。
-   - 标注出日主（日干）是什么五行。
-2. **五行衰旺与喜忌**：
-   - 结合 JSON 中的五行数量（`baseCount`）和月令，判断日主的强弱。
-   - 给出喜用神 and 忌神。
-3. **格局与性格解析**：
-   - 判定月令格局，分析用户的性格双重性、天赋与潜在盲点。
-4. **大运与流年批示**：
-   - 结合大运列表（`dayunList`），指出用户当前所处的大运吉凶，未来十年的趋势。
-5. **神煞点睛**：
-   - 挑选 JSON 中最关键的 2-3 个神煞（如天乙贵人、文昌、华盖、魁罡、羊刃等）进行趣味解读。
-6. **终身运势建议**：
-   - 围绕事业财运、感情婚姻、健康调理给出针对性的传统建议（注意语气：科学客观，仅供娱乐，严禁恐吓）。
+#### 1. ☯️ 赛博八字乾坤盘
+请使用 Markdown 表格完整展示，必须包含以下所有行：
+
+| 属性 | 年柱 | 月柱 | 日柱 | 时柱 |
+| :--- | :--- | :--- | :--- | :--- |
+| **十神** | `${bazi.year.shishen_gan}` | `${bazi.month.shishen_gan}` | 日主 | `${bazi.hour.shishen_gan}` |
+| **天干** | `${bazi.year.gan}` | `${bazi.month.gan}` | `${bazi.day.gan}` | `${bazi.hour.gan}` |
+| **地支** | `${bazi.year.zhi}` | `${bazi.month.zhi}` | `${bazi.day.zhi}` | `${bazi.hour.zhi}` |
+| **支藏天干** | `${bazi.year.hide_gan.join(',')}` | `${bazi.month.hide_gan.join(',')}` | `${bazi.day.hide_gan.join(',')}` | `${bazi.hour.hide_gan.join(',')}` |
+| **地势(十二长生)** | `${bazi.year.dishi}` | `${bazi.month.dishi}` | `${bazi.day.dishi}` | `${bazi.hour.dishi}` |
+| **空亡** | `${bazi.year.xunkong}` | `${bazi.month.xunkong}` | `${bazi.day.xunkong}` | `${bazi.hour.xunkong}` |
+| **纳音** | `${nayins.year}` | `${nayins.month}` | `${nayins.day}` | `${nayins.hour}` |
+
+#### 2. 🌟 八字神煞 (Shen Sha)
+必须分柱完整列出脚本算出的所有神煞（直接提取 `shensha` 字段）：
+- **年柱神煞**：`${shensha.year.join('，') || '无'}`
+- **月柱神煞**：`${shensha.month.join('，') || '无'}`
+- **日柱神煞**：`${shensha.day.join('，') || '无'}`
+- **时柱神煞**：`${shensha.hour.join('，') || '无'}`
+
+#### 3. 📅 大运排盘 (Da Yun)
+必须完整输出脚本计算的起运信息和大运列表（直接提取 `dayunInfo` 和 `dayunList`）：
+- **起运时间**：`${dayunInfo.qiYunDuration}` (公历约 `${dayunInfo.qiYunSolarDate}` 起运)
+- **十步大运表**：
+  | 运限 | 起始年龄 | 起始年份 | 大运干支 |
+  | :--- | :--- | :--- | :--- |
+  *(请把 `dayunList` 中所有的 index (除 0 外)、startAge、startYear、ganZhi 完整用表格列出来)*
+
+#### 4. ⚖️ 五行衰旺与喜忌
+- 展现原局五行计数（`wuxing.baseCount`）：金 `Count`、木 `Count`、水 `Count`、火 `Count`、土 `Count`。
+- 结合月令进行五行强弱判定，指出“喜神”、“用神”与“忌神”。
+
+#### 5. 📖 综合解盘命理分析
+基于上述精准数据，结合经典理论（《滴天髓》等）给出以下解读：
+- **格局与性格**：根据月令格局及干支藏透，分析性格双重性及潜在盲点。
+- **事业与财运**：结合日主强弱、十神（财/官/印/食伤）配置给出发展建议。
+- **感情与婚姻**：结合男看财星、女看官杀、日支婚姻宫（日支）的冲合进行点拨。
+- **健康调理建议**：根据五行多寡缺失进行传统养生指引。
 
 ---
 
